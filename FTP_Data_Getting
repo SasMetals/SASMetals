@@ -1,0 +1,240 @@
+MODULE VAR_Data_RW604_R7
+	
+	VAR num val_A1 :=  0 ;
+	VAR num val_A2 :=  0 ;
+	VAR num val_A3 :=  0 ;
+	VAR num val_A4 :=  0 ;
+	VAR num val_A5 :=  0 ;
+	VAR num val_A6 :=  0 ;
+	VAR num val_A7 :=  0 ;
+	VAR num val_A8 :=  0 ;
+	VAR num val_A9 :=  0 ;
+	VAR num val_A10 := 0 ;
+	VAR num val_A11 := 0 ;
+	VAR num val_A12 := 0 ;
+	VAR num val_A13 := 0 ;
+	VAR num val_A14 := 0 ;
+	VAR num val_A15 := 0 ;
+	
+	VAR bool Match := false;
+	VAR string Secret_Place := "W:/LOGS/TESTING/Short_List/"; ! this is the network file path address
+	VAR iodev READ_File;
+		
+
+	
+	PROC Load_Values()
+	
+	VAR string Part_To_Find;
+	VAR dnum DPartNumber;
+	VAR buttondata nChoice;
+		
+	TRY_THAT_AGAIN:
+	val_A1 := 0;
+	val_A2 := 0;
+	val_A3 := 0;
+	val_A4 := 0;
+	val_A5 := 0;
+	val_A6 := 0;
+	val_A7 := 0;
+	val_A8 := 0;
+	val_A9 := 0;
+	val_A10 :=0;
+	val_A11 :=0;
+	val_A12 :=0;
+	val_A13 :=0;
+	val_A14 :=0;
+	val_A15 :=0;
+	Match := FALSE;
+	
+	DPartNumber := uidnumentry (\Header:="Variable DataBase Search Tool"\Message:="Please Enter Part Number"\Wrap\Icon:=iconInfo\AsInteger);
+	VAL_Loader Val_A1, Val_A2, Val_A3, Val_A4, Val_A5, Val_A6, Val_A7, Val_A8, Val_A9, Val_A10, Val_A11, Val_A12, Val_A13, Val_A14, Val_A15, DPartNumber;
+	
+	IF Match = TRUE THEN
+		TPErase;
+		TPWrite " ";
+		TPWrite " ";
+		TPWrite "   For Part Number "\dNum:=DPartNumber;
+		TPWrite "     A1 Is = "\NUM:= val_A1;
+		TPWrite "     A2 Is = "\NUM:= Val_A2;
+		TPWrite "     A3 Is = "\NUM:= Val_A3;
+		TPWrite "     A4 Is = "\NUM:= Val_A4;
+		TPWrite "     A5 Is = "\NUM:= val_A5;
+		TPWrite "     A6 Is = "\NUM:= Val_A6;
+		TPWrite "     A7 Is = "\NUM:= Val_A7;
+		TPWrite "     A8 Is = "\NUM:= Val_A8;
+		TPWrite "     A9 Is = "\NUM:= Val_A9;
+		TPWrite "     A10 Is = "\NUM:= Val_A10;
+		TPWrite "     A11 Is = "\NUM:= Val_A11;
+		TPWrite "     A12 Is = "\NUM:= val_A12;
+		TPWrite "     A13 Is = "\NUM:= Val_A13;
+		TPWrite "     A14 Is = "\NUM:= Val_A14;
+		TPWrite "     A15 Is = "\NUM:= Val_A15;
+		WaitTime 10;
+	
+	ELSEIF Match = FALSE THEN
+       nChoice:=UIMessageBox(\Header:="NO-MATCH"\Message:=" THERE IS NO MATCHING PROGRAM NUMBER,  ENTER ANOTHER NUMBER"\Buttons:= btnOK\Icon:=iconInfo);     
+	ENDIF
+
+	ENDPROC
+	
+	
+	
+	PROC VAL_Loader(inout  num dimA1,
+					inout  num dimA2,
+					inout  num dimA3,
+					inout  num dimA4,
+					inout  num dimA5,
+					inout  num dimA6,
+					inout  num dimA7,
+					inout  num dimA8,
+					inout  num dimA9,
+					inout  num dimA10,
+					inout  num dimA11,
+					inout  num dimA12,
+					inout  num dimA13,
+					inout  num dimA14,
+					inout  num dimA15,
+					DNUM What_Part   )
+   
+				
+	VAR String Val_1;
+	VAR String Val_2;
+	VAR String Val_3;
+	VAR String Val_4;
+	VAR String Val_5;
+	VAR String Val_6;
+	VAR String Val_7;
+	VAR String Val_8;
+	VAR String Val_9;
+	VAR String Val_10;
+	VAR String Val_11;
+	VAR String Val_12;
+	VAR String Val_13;
+	VAR String Val_14;
+	VAR String Val_15;
+	
+	VAR STRING Row_Values{2};
+	VAR string Is_This_Here:="";
+	VAR string File_Match:="";
+
+	VAR num columns := 2;
+	
+	VAR bool ok := False;
+	VAR dir The_Files;
+	
+	! INCASE THE OPERATOR HITS OKAY WHILE THE PARTNUMBER IS BLANK
+	IF What_Part = 1 THEN 
+		Match := FALSE;
+		RETURN;
+	ENDIF
+	
+	! this lets you combine the PART-NUMBER with any specific naming convention, 
+	!THIS IS CASE SENSATIVE...
+	Is_This_Here := "9" + ValToStr(What_Part) + ".CSV" ;      
+	
+	
+	! Look in a directory for a matching FILE name
+	OpenDir The_Files,Secret_Place;
+	WHILE ReadDir(The_Files, File_Match) DO
+		
+	! if you have a matching FILE name...	
+	IF Is_This_Here = File_Match then 
+		Match := TRUE;
+		Stop;
+		
+		! OPEN the MATCHING FILE IN THE directory...
+		Open Secret_Place + File_Match,READ_File\Read;
+			
+		! WHILE we have not reachied the END_OF_FILE...
+			WHILE Row_Values{1} <> EOF DO
+			
+				! COPY EACH BOX...SEPERATED BY COMMAS...
+				FOR I FROM 1 TO 2 STEP +1 DO
+					Row_Values{I} := ReadStr(READ_File\Delim:=","\RemoveCR); 
+				ENDFOR				
+					
+				    ! TEST For Program Values, COPY As Strings, Then Make Them NUMBERS...
+					TEST  Row_Values{1}
+	
+						CASE "A15":
+							 Val_15:=Row_Values{2};
+							 ok := StrToVal(Val_15,dimA15);
+						
+						CASE "A14":	
+							 Val_14:=Row_Values{2};
+							 ok := StrToVal(Val_14,dimA14);					
+						
+						CASE "A13":	
+ 							 Val_13:=Row_Values{2};
+							 ok := StrToVal(Val_13,dimA13);	
+						
+						CASE "A12":	 
+							 Val_12:=Row_Values{2};
+							 ok := StrToVal(Val_12,dimA12);	
+							 
+						CASE "A11":
+							 Val_11:=Row_Values{2};
+							 ok := StrToVal(Val_11,dimA11);
+						
+						CASE "A10":	
+							 Val_10:=Row_Values{2};
+							 ok := StrToVal(Val_10,dimA10);					
+						
+						CASE "A9":	
+ 							 Val_9:=Row_Values{2};
+							 ok := StrToVal(Val_9,dimA9);	
+						
+						CASE "A8":	 
+							 Val_8:=Row_Values{2};
+							 ok := StrToVal(Val_8,dimA8);	
+							 
+						CASE "A7":
+							 Val_7:=Row_Values{2};
+							 ok := StrToVal(Val_7,dimA7);
+						
+						CASE "A6":	
+							 Val_6:=Row_Values{2};
+							 ok := StrToVal(Val_6,dimA6);					
+						
+						CASE "A5":	
+ 							 Val_5:=Row_Values{2};
+							 ok := StrToVal(Val_5,dimA5);	
+						
+						CASE "A4":	 
+							 Val_4:=Row_Values{2};
+							 ok := StrToVal(Val_4,dimA4);	
+							 
+						CASE "A3":	
+							 Val_3:=Row_Values{2};
+							 ok := StrToVal(Val_3,dimA3);					
+						
+						CASE "A2":	
+ 							 Val_2:=Row_Values{2};
+							 ok := StrToVal(Val_2,dimA2);	
+						
+						CASE "A1":	 
+							 Val_1:=Row_Values{2};
+							 ok := StrToVal(Val_1,dimA1);	
+							  
+					ENDTEST	
+									
+			ENDWHILE
+	ENDIF		              
+
+	ENDWHILE
+		 
+		! Exit The File, Also The Directory
+		Close READ_File;
+		CloseDir The_Files;	
+		
+		
+!		ERROR
+		
+!		IF ERRNO = ERR_RCVDATA THEN
+!		TRYNEXT;
+!		ENDIF
+
+    ENDPROC
+
+
+ENDMODULE
