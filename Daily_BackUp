@@ -1,0 +1,128 @@
+
+	
+
+MODULE DailyBackUp
+	
+	
+	VAR num Monday := 1;
+	VAR num Tuesday := 2;
+	VAR num Wednesday := 3;
+	VAR num Thursday := 4;
+	VAR num Friday := 5;
+	VAR num Saturday := 6;
+	VAR num Sunday := 7;
+	
+	VAR num Last_BackUp := 0;
+	VAR num Day_Of_Week := 0;
+	VAR string Last_Daily := "";
+	VAR string Last_Weekly_BackUp := " ";
+	VAR string Date_Of_BackUp := "";
+	VAR string Todays_Date := ""; 
+	
+	
+	!  To Set This Up On A Real Controller...
+	! use the controll panel, configuretions to make new "Signal"s
+	! "do_DailyBackUp" & "do_WeeklyBackUp"
+	! only after digital Outputs are made, THEN make "SystemInputs" to "TIE" the new "Digital Outputs" to SysInputs
+	! the new "do_#$%BackUp" to "System Input" backup
+	! THEN use "System Output" to "TIE" "d0_Im_Busy to "BackUpInProgress"
+	
+	! This lets you PulseDO a system backup
+	! and WHILE a backup is being performed, wait in place
+	! 
+	
+	
+	 
+	PROC Back_It_Up()
+
+	
+	! If We Already Took A BackUp Then No_BackUp !
+	IF Day_Of_Week = Last_BackUp and Todays_Date = CDate() THEN 
+		GOTO No_BackUp; 
+	ENDIF
+	
+	
+	Day_Of_Week := GetTime(\WDay);
+	Todays_Date := cdate();
+	
+	
+	IF Day_Of_Week = Monday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_MondayBackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";
+		
+		
+	ELSEIF Day_Of_Week = Tuesday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_TuesdayBackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";
+		
+		
+	ELSEIF Day_Of_Week = Wednesday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Weekly_BackUp := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_WeeklybackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";	
+		
+		
+	ELSEIF Day_Of_Week = Thursday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_ThursdaybackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";	
+	
+		
+	ELSEIF Day_Of_Week = Friday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_FridaybackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";	
+		
+		
+	ELSEIF Day_Of_Week = Saturday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_SaturdaybackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";	
+		
+		
+	ELSEIF Day_Of_Week = Sunday THEN 
+		
+		Last_BackUp := Day_Of_Week;
+		Last_Daily := Todays_Date ;
+		
+		PulseDO\PLength:=1, do_SundaybackUp;
+		WaitUntil\InPos, DOutput(do_Im_Busy)=0;
+		TPwrite" Daily BackUp Complete ";	
+		
+	ENDIF	
+	
+	No_BackUp:	
+		
+	ENDPROC
+
+ENDMODULE
+
+
+
+
